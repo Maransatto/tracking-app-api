@@ -9,9 +9,7 @@ import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
