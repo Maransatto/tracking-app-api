@@ -1,48 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Client } from './entities/client';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Injectable()
 export class ClientsService {
-  clients: Client[] = [];
+  constructor(
+    @InjectRepository(Client)
+    private readonly clientRepository: Repository<Client>,
+  ) {}
 
-  constructor() {
-    this.clients = [
-      new Client(
-        1,
-        'Fernando Maransatto',
-        '44 99930 2089',
-        'Av XV de Novembro, 89',
-      ),
-      new Client(2, 'Maria Oliveira', '44 99876 5432', 'Rua das Flores, 123'),
-      new Client(3, 'João Souza', '44 99765 4321', 'Av Brasil, 456'),
-      new Client(4, 'Ana Pereira', '44 99654 3210', 'Rua das Palmeiras, 789'),
-    ];
+  async findAll(paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery;
+    return await this.clientRepository.find({ skip: offset, take: limit });
   }
 
-  findAll() {
-    return this.clients;
-  }
-
-  findOne(id: number) {
-    return this.clients.find((c) => c.id === id);
+  async findOne(id: number) {
+    return await this.clientRepository.findOne({ where: { id } });
   }
 
   create(createClientDto: CreateClientDto) {
-    this.clients.push({ id: this.clients.length + 1, ...createClientDto });
-    return this.clients;
+    const client = this.clientRepository.create(createClientDto);
+    return this.clientRepository.save(client);
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    this.clients = this.clients.map((c) =>
-      c.id === id ? ({ ...c, ...updateClientDto } as Client) : c,
-    );
-    return this.clients;
+  async update(id: number, updateClientDto: UpdateClientDto) {
+    const client = await this.clientRepository.preload({
+      id,
+      ...updateClientDto,
+    });
+
+    if (!client) {
+      throw new NotFoundException(`Client #${id} not found`);
+    }
+
+    return this.clientRepository.save(client);
   }
 
-  remove(id: number) {
-    this.clients = this.clients.filter((c) => c.id !== id);
-    return this.clients;
+  async remove(id: number) {
+    const client = await this.findOne(id);
+    return this.clientRepository.remove(client);
   }
 }
