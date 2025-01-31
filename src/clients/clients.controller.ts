@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -17,8 +19,8 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Query() paginationQuery: PaginationQueryDto) {
+    return this.clientsService.findAll(paginationQuery);
   }
 
   @Get(':id')
