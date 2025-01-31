@@ -14,7 +14,19 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
-  async signIn(@Body() signInDto: SignInDto) {
+  async signIn(
+    // @Res({ passthrough: true }) response: Response, // from express
+    @Body()
+    signInDto: SignInDto,
+  ) {
     return this.authenticationService.signIn(signInDto);
+
+    // using the commented code below will set the cookie in the response for secure authentication
+    // const accessToken = await this.authenticationService.signIn(signInDto);
+    // response.cookie('accessToken', accessToken, {
+    //   secure: true,
+    //   httpOnly: true,
+    //   sameSite: true,
+    // });
   }
 }
