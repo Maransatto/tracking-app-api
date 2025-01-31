@@ -26,7 +26,7 @@ export class ClientsService {
   }
 
   findOne(id: number) {
-    return this.clients.filter((c) => c.id === id);
+    return this.clients.find((c) => c.id === id);
   }
 
   create(createClientDto: CreateClientDto) {

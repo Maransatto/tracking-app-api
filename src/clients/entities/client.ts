@@ -2,6 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Client {
+  // the Client specification will be shown on swagger after the complete implementation
+  // of the typeorm instead of a plain class (I think so)
   @PrimaryGeneratedColumn()
   id: number;
 
