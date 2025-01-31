@@ -1,5 +1,17 @@
 {
     "conventionalCommits.scopes": [
         "Clients"
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5433,
+            "driver": "PostgreSQL",
+            "name": "localhost",
+            "database": "postgres",
+            "username": "postgres",
+            "password": "earthisflat123"
+        }
     ]
 }
