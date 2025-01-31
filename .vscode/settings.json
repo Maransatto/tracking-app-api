@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
-        "Clients"
+        "Clients",
+        "Users"
     ],
     "sqltools.connections": [
         {
