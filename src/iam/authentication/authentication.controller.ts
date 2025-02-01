@@ -1,18 +1,19 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorator';
-import { SignInDto } from './dto/sign-in.dto/sign-in.dto';
-import { SignUpDto } from './dto/sign-up.dto/sign-up.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import { AuthType } from './enums/auth-type.enums';
 
 @Auth(AuthType.None)
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(private readonly authService: AuthenticationService) {}
 
   @Post('sign-up')
   async signUp(@Body() signUpDto: SignUpDto) {
-    return this.authenticationService.signUp(signUpDto);
+    return this.authService.signUp(signUpDto);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -22,7 +23,7 @@ export class AuthenticationController {
     @Body()
     signInDto: SignInDto,
   ) {
-    return this.authenticationService.signIn(signInDto);
+    return this.authService.signIn(signInDto);
 
     // using the commented code below will set the cookie in the response for secure authentication
     // const accessToken = await this.authenticationService.signIn(signInDto);
@@ -31,5 +32,11 @@ export class AuthenticationController {
     //   httpOnly: true,
     //   sameSite: true,
     // });
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-token')
+  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshTokens(refreshTokenDto);
   }
 }
