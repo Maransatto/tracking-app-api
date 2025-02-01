@@ -16,7 +16,10 @@ import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { RefreshTokenIdsStorage } from './refresh-token-ids.storage';
+import {
+  InvalidateRefreshTokenError,
+  RefreshTokenIdsStorage,
+} from './refresh-token-ids.storage';
 
 @Injectable()
 export class AuthenticationService {
@@ -126,7 +129,7 @@ export class AuthenticationService {
         refreshTokenId,
       );
 
-      // Refresh Token Notation (RTN) technique
+      // Refresh Token Rotation technique
       if (isValid) {
         // invalidate all refresh tokens
         await this.refreshTokenIdsStorage.invalidate(user.id);
@@ -136,7 +139,11 @@ export class AuthenticationService {
 
       // generate new tokens
       return this.generateTokens(user);
-    } catch {
+    } catch (err) {
+      if (err instanceof InvalidateRefreshTokenError) {
+        // Take action: notify user that his refresh token might be stolen?
+        throw new UnauthorizedException('Access denied');
+      }
       throw new UnauthorizedException();
     }
   }
